@@ -46,6 +46,7 @@ const HotCollections = () => {
                     <Skeleton width="100%" height="180px" borderRadius="10px" />
                     <div className="nft_coll_pp">
                       <Skeleton width="60px" height="50px" borderRadius="100%" />
+                      <i className="fa fa-check"></i>
                     </div>
                     <div className="nft_coll_info">
                     <Skeleton width="40%" height="20px" borderRadius="4px" />
@@ -63,12 +64,12 @@ const HotCollections = () => {
                 <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={index}>
                   <div className="nft_coll">
                     <div className="nft_wrap">
-                    <Link to="/item-details">
+                    <Link to={`/item-details/${collection.nftId}`}>
                       <img src={collection.nftImage} className="lazy img-fluid" alt="" />
                     </Link>
                     </div>
                     <div className="nft_coll_pp">
-                      <Link to="/author">
+                      <Link to={`/author/${collection.authorId}`}>
                         <img className="lazy pp-coll" src={collection.authorImage} alt="" />
                       </Link>
                       <i className="fa fa-check"></i>
