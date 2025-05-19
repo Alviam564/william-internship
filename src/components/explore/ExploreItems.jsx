@@ -99,7 +99,7 @@ const Explore = () => {
       )}
       <div className="col-md-12 text-center">
         {explore !== 16 && (
-          <Link onClick={() => setExplore(explore + 4)} to="" id="loadmore" className="btn-main lead">
+          <Link onClick={() => setExplore(explore + 4)} to="" id="loadmore" data-aos="fade-up" className="btn-main lead">
             Load more
           </Link>
         )}
