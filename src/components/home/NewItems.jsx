@@ -1,53 +1,24 @@
 import React, { useEffect, useState} from "react";
 import { Link } from "react-router-dom";
-import { BASE_URL } from "../utils/fetchfromApiItems"
 import Slick from "../utils/Slick";
 import Skeleton from "../UI/Skeleton";
+import Countdown from "../utils/Countdown";
+import axios from "axios";
 
 
 const NewItems = () => {
-
   const [newitems, setnewitems] = useState([]);
-  const [isLoading, setLoading] = useState(true)
-  const [now, setNow] = useState(Date.now())
   
-    useEffect(() => {
-      const fetchData = async () => {
-      try {
-        const response = await fetch(BASE_URL);
-        const data = await response.json();
-        setnewitems(data);     
-        } catch (error) {
-          console.error("Failed to fetch data:", error);
-        } finally {
-          setLoading(false)
-        }
-      }
-  
-      fetchData();
-    }, []);
+    const fetchnewitems = async () => {
+    const response = await axios.get(
+      'https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems'
+    );
+    setnewitems(response.data); 
+  }    
 
-
-    function countdown(expiryTime, now){
-      const timeLeft = expiryTime - now;
-
-      if (timeLeft <= 0) return "Expired"
-      
-      let hours = Math.floor(timeLeft / (1000 * 60 * 60))
-      let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
-      let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
-
-      const pad = (n) => n.toString().padStart(2)
-      return `${pad(hours)}h ${pad(minutes)}m ${(seconds)}s`
-    }
-
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setNow(Date.now());
-      }, 1000)
-
-      return () => clearInterval(interval)
-    }, []);
+    useEffect (() => {
+    fetchnewitems();
+  }, []);
 
   return (
     <section id="section-items" className="no-bottom">
@@ -59,32 +30,7 @@ const NewItems = () => {
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-          {isLoading ? (
-            <div className="row">
-              {Array(4).fill().map((_, index) => (
-                <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={index}>
-                  <div className="nft__item">
-                    <div className="author_list_pp">
-                      <Skeleton width="50px" height="50px" borderRadius="100%" />
-                      <i className="fa fa-check"></i>
-                    </div>
-                    <div className="nft__item_preview">
-                    <Skeleton width="100%" height="280px" />
-                    </div>
-                    <div className="nft__item_info">
-                      <Skeleton width="69%" height="25px" borderRadius="4px" />
-                    </div>
-                    <div className="nft__item_price">
-                      <Skeleton width="35%" height="20px" borderRadius="1px" />
-                    </div>
-                    <div className="nft__item_like">
-                      <Skeleton width="35px" height="20px" borderRadius="1px" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : ( 
+          {newitems.length ? (
             <Slick>
               {newitems.map((items, index) => (
                 <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={index}>
@@ -99,25 +45,8 @@ const NewItems = () => {
                         <i className="fa fa-check"></i>
                       </Link>
                     </div>
-                    <div className="de_countdown">{countdown(items.expiryDate, now)}</div>
+                    <Countdown expiryDate={items.expiryDate} />
                     <div className="nft__item_wrap">
-                      <div className="nft__item_extra">
-                        <div className="nft__item_buttons">
-                          <button>Buy Now</button>
-                          <div className="nft__item_share">
-                            <h4>Share</h4>
-                            <a href="" target="_blank" rel="noreferrer">
-                              <i className="fa fa-facebook fa-lg"></i>
-                            </a>
-                            <a href="" target="_blank" rel="noreferrer">
-                              <i className="fa fa-twitter fa-lg"></i>
-                            </a>
-                            <a href="">
-                              <i className="fa fa-envelope fa-lg"></i>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
                       <Link to={`/item-details/${items.nftId}`}>
                         <img
                           src={items.nftImage}
@@ -140,6 +69,31 @@ const NewItems = () => {
                 </div>
               ))}
             </Slick>
+          ) : ( 
+            <div className="row">
+              {Array(4).fill().map((_, index) => (
+                <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={index}>
+                  <div className="nft__item">
+                    <div className="author_list_pp">
+                      <Skeleton width="50px" height="50px" borderRadius="100%" />
+                      <i className="fa fa-check"></i>
+                    </div>
+                      <div className="nft__item_preview">
+                        <Skeleton width="100%" height="280px" />
+                      </div>
+                    <div className="nft__item_info">
+                      <Skeleton width="69%" height="25px" borderRadius="4px" />
+                    </div>
+                    <div className="nft__item_price">
+                      <Skeleton width="35%" height="20px" borderRadius="1px" />
+                    </div>
+                    <div className="nft__item_like">
+                      <Skeleton width="35px" height="20px" borderRadius="1px" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
